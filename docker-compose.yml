@@ -23,6 +23,7 @@ services:
     image: seyrinian/tcg-api:latest
     container_name: tcg_api
     restart: unless-stopped
+    entrypoint: sh -c "ln -s /app/dist /app/src && exec /app/docker-entrypoint.sh"
     ports:
       - '3001:3001'
     environment:

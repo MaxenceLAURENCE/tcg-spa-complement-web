@@ -3,24 +3,36 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from './pages/HomePage.vue'
 import SingInPage from './pages/SingInPage.vue'
 import SingUpPage from './pages/SingUpPage.vue'
+import Test from './pages/TestPage.vue'
 import { useAuthStore } from './store/auth.store'
 
 export const ROUTES = {
   HOME: '/',
   SIGN_UP: '/sign-up',
   SIGN_IN: '/sign-in',
+  TEST: '/test',
 } as const
 
 const routes = [
-  { path: ROUTES.HOME, component: HomePage },
+  { path: ROUTES.HOME, component: HomePage, meta: { requiresAuth: true } },
   { path: ROUTES.SIGN_UP, component: SingUpPage },
   { path: ROUTES.SIGN_IN, component: SingInPage },
-  // Exemple de page avec connexion :
-  // {
-  //   path: ROUTES.CONTENT,
-  //   component: ContentPage,
-  //   meta: { requiresAuth: true },
-  // },
+  {
+    path: '/decks/new',
+    component: () => import('./pages/DeckCreatePage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/decks/:id/edit',
+    component: () => import('./pages/DeckEditPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/decks/:id',
+    component: () => import('./pages/DeckDetailsPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  { path: ROUTES.TEST, component: Test },
 ]
 
 const router = createRouter({
