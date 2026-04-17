@@ -32,6 +32,11 @@ const routes = [
     component: () => import('./pages/DeckDetailsPage.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/game',
+    component: () => import('./pages/GamePage.vue'),
+    meta: { requiresAuth: true },
+  },
   { path: ROUTES.TEST, component: Test },
 ]
 
