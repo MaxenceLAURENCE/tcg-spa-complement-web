@@ -19,12 +19,12 @@ const routes = [
   { path: ROUTES.SIGN_IN, component: SingInPage },
   {
     path: '/decks/new',
-    component: () => import('./pages/DeckFormPage.vue'),
+    component: () => import('./pages/DeckCreatePage.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/decks/:id/edit',
-    component: () => import('./pages/DeckFormPage.vue'),
+    component: () => import('./pages/DeckEditPage.vue'),
     meta: { requiresAuth: true },
   },
   {

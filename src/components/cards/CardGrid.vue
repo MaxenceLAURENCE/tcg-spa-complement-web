@@ -19,16 +19,16 @@ import type { Card } from '@/types/card'
 
 // Explication props : par défaut : aucune carte sélectionnée, pas de limite max, taille moyenne (md)
 // lister les carte a afficher :
-// <CardGrid :cards="allCards" />
+// <CardGrid :cards="Card[]" />
 
 // Liste contenant les IDs des cartes actuellement sélectionnées :
-// <CardGrid :cards="allCards" v-model:selected-ids="mesIds" />
+// <CardGrid :cards="Card[]" v-model:selected-ids="number[]" />
 
 // Nombre maximum de cartes pouvant être sélectionnées :
-// <CardGrid :cards="allCards" :max="10" />
+// <CardGrid :cards="Card[]" :max="number" />
 
 // Taille des cartes :
-// <CardGrid :cards="allCards" size="sm" />
+// <CardGrid :cards="Card[]" size="'sm' | 'md'" />
 const props = withDefaults(
   defineProps<{
     cards: Card[]

@@ -38,14 +38,14 @@ import type { Card } from '@/types/card'
 
 // Explication props :
 // pour la taille :
-// <SigleCard :card="card" size="sm" /> ou <SigleCard :card="card" size="md" />                               <!-- Standard -->
+// <SigleCard :card="Card" size="'sm' | 'md'" />
 
 // pour la séléction :
-// <SigleCard :card="card" size="md" is-selected />
-// <SigleCard :card="card" size="md" is-disabled />
+// <SigleCard :card="Card" size="'sm' | 'md'" is-selected />
+// <SigleCard :card="Card" size="'sm' | 'md'" is-disabled />
 
 // pour la vie :
-// <SigleCard :card="card" size="md" :current-hp="15" />
+// <SigleCard :card="Card" size="'sm' | 'md'" :current-hp="number" />
 const props = defineProps<{
   card: Card
   size?: 'sm' | 'md'
