@@ -11,6 +11,7 @@ export const ROUTES = {
   SIGN_UP: '/sign-up',
   SIGN_IN: '/sign-in',
   TEST: '/test',
+  GAME: '/game',
 } as const
 
 const routes = [

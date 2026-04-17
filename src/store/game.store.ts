@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { io, type Socket } from 'socket.io-client'
 import { computed, ref } from 'vue'
 
-import router from '@/router'
+import router, { ROUTES } from '@/router'
 import type { GameState, Room } from '@/types/index'
 
 import { useAuthStore } from './auth.store'
@@ -71,7 +71,7 @@ export const useGameStore = defineStore('game', () => {
     socket.value.on('gameStarted', (state: GameState) => {
       gameState.value = state
       gameResult.value = null
-      router.push('/game')
+      router.push(ROUTES.GAME)
     })
 
     socket.value.on('gameStateUpdated', (state: GameState) => {
