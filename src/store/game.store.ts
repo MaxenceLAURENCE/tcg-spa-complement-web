@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { io, type Socket } from 'socket.io-client'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import router from '@/router'
 import type { GameState, Room } from '@/types/index'
@@ -14,6 +14,28 @@ export const useGameStore = defineStore('game', () => {
   const currentRoomId = ref<string | null>(null)
   const gameState = ref<GameState | null>(null)
   const error = ref<string | null>(null)
+  const gameResult = ref<{ winnerId: number | null } | null>(null)
+
+  const authStore = useAuthStore()
+
+  const isMyTurn = computed(() => {
+    return gameState.value?.activePlayerId === authStore.user?.id
+  })
+
+  /** Plateau de jeu */
+  const boards = computed(() => {
+    if (!gameState.value) return null
+    return {
+      self: {
+        active: gameState.value.players.self.activePokemon,
+        bench: gameState.value.players.self.bench,
+      },
+      opponent: {
+        active: gameState.value.players.opponent.activePokemon,
+        bench: gameState.value.players.opponent.bench,
+      },
+    }
+  })
 
   /**
    * Initialise la connexion Socket.io avec le token JWT
@@ -48,11 +70,27 @@ export const useGameStore = defineStore('game', () => {
     // --- Événements Game ---
     socket.value.on('gameStarted', (state: GameState) => {
       gameState.value = state
+      gameResult.value = null
       router.push('/game')
     })
 
     socket.value.on('gameStateUpdated', (state: GameState) => {
       gameState.value = state
+    })
+
+    socket.value.on('gameEnded', (result: { winnerId: number | null }) => {
+      gameResult.value = result
+      if (gameState.value) {
+        gameState.value.status = 'finished'
+        gameState.value.winnerId = result.winnerId
+      }
+    })
+
+    socket.value.on('opponentDisconnected', () => {
+      error.value = "L'adversaire s'est déconnecté."
+      if (gameState.value) {
+        gameState.value.status = 'disconnected'
+      }
     })
 
     socket.value.on('error', (msg: string) => {
@@ -61,10 +99,17 @@ export const useGameStore = defineStore('game', () => {
 
     socket.value.on('disconnect', () => {
       isConnected.value = false
-      if (gameState.value) {
-        gameState.value.status = 'disconnected'
-      }
     })
+  }
+
+  /**
+   * Remet le store à son état initial
+   */
+  const resetGame = () => {
+    gameState.value = null
+    currentRoomId.value = null
+    gameResult.value = null
+    error.value = null
   }
 
   /**
@@ -74,8 +119,7 @@ export const useGameStore = defineStore('game', () => {
     socket.value?.disconnect()
     socket.value = null
     isConnected.value = false
-    gameState.value = null
-    currentRoomId.value = null
+    resetGame()
   }
 
   /**
@@ -92,6 +136,10 @@ export const useGameStore = defineStore('game', () => {
   /**
    * Actions de Jeu
    */
+  const drawCards = (count: number = 1) => {
+    socket.value?.emit('drawCards', { count })
+  }
+
   const playCard = (cardId: number) => {
     socket.value?.emit('playCard', { cardId })
   }
@@ -110,10 +158,15 @@ export const useGameStore = defineStore('game', () => {
     currentRoomId,
     gameState,
     error,
+    gameResult,
+    isMyTurn,
+    boards,
     connect,
     disconnect,
+    resetGame,
     createRoom,
     joinRoom,
+    drawCards,
     playCard,
     attack,
     endTurn,
